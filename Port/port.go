@@ -26,24 +26,20 @@ func ScanPort(protocol, hostname string, port int) ScanResult { // Function that
 	defer func(conn net.Conn) { // Waits for surrounding functions to return before this function executes. Tries to close the connection that was established previously.
 		err := conn.Close() // Stores any produced errors from trying to close the connection.
 		if err != nil { // If there is an error, print that an error was encountered.
-			log.Warn("Connection close error")
+			log.Error("Connection close error") // If the connection fails to close, log an error.
 		}
-	}(conn)
+	}(conn) // Immediately Invoked Function. Right after the above function is declared, we invoke it with conn as an argument.
 	result.State = "Open" // Should no errors be encountered, set the state atribute of the element in go to Open.
 	return result // Returns the element of the array.
 }
 
 func InitialScan(hostname string) []ScanResult {
-
 	var results []ScanResult
-
 	for i := 0; i <= 1024; i++ {
 		results = append(results, ScanPort("tcp", hostname, i))
 	}
-
 	for i := 0; i <= 1024; i++ {
 		results = append(results, ScanPort("udp", hostname, i))
 	}
-	
 	return results
 }
