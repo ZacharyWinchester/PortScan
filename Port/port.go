@@ -47,8 +47,8 @@ func ScanPort(protocol, hostname string, port int, wg *sync.WaitGroup) ScanResul
 }
 
 func InitialScan(hostname string) []ScanResult { // Takes an IP address as an argument, and returns an array
-	wg.Add(1024)
-	for i := 0; i <= 1024; i++ { // As long as i is less than or equal to 1024, run the following and increase i by one.
+	wg.Add(3)
+	for i := 0; i <= 3; i++ { // As long as i is less than or equal to 1024, run the following and increase i by one.
 		go ScanPort("tcp", hostname, i, &wg)
 	}
 	wg.Wait()
