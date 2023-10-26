@@ -33,13 +33,13 @@ func ScanPort(protocol, hostname string, port int) ScanResult { // Function that
 	return result // Returns the element of the array.
 }
 
-func InitialScan(hostname string) []ScanResult {
-	var results []ScanResult
-	for i := 0; i <= 1024; i++ {
-		results = append(results, ScanPort("tcp", hostname, i))
+func InitialScan(hostname string) []ScanResult { // Takes an IP address as an argument, and returns an array
+	var results []ScanResult // Initalizes a zero-filled array in results
+	for i := 0; i <= 1024; i++ { // As long as i is less than or equal to 1024, run the following and increase i by one.
+		results = append(results, ScanPort("tcp", hostname, i)) // Run the ScanPort function with the tcp, hostname, and i arguments. Put this on the end of the results array.
 	}
-	for i := 0; i <= 1024; i++ {
-		results = append(results, ScanPort("udp", hostname, i))
+	for i := 0; i <= 1024; i++ { // As long as i is less than or equal to 1024, run the following and increase i by one.
+		results = append(results, ScanPort("udp", hostname, i)) // Run the ScanPort function with the udp, hostname, and i arguments. Put this on the end of the results array.
 	}
-	return results
+	return results // Return the results array.
 }
