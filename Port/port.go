@@ -8,16 +8,17 @@ import (
 	log "github.com/sirupsen/logrus" // Adds advanced logging functionality using the logrus package.
 )
 
-var (
-	mutex sync.Mutex
-	wg sync.WaitGroup
-)
-
 type ScanResult struct { // Creates a structure to be called later for implimentation into an array. Allows the array to easily store both the port and state of the port in each element
 	Port  int
 	Protocol string
 	State string
 }
+
+var (
+	mutex sync.Mutex
+	wg sync.WaitGroup
+	results []ScanResult // Initalizes a zero-filled array in results
+)
 
 func ScanPort(protocol, hostname string, port int, wg *sync.WaitGroup) ScanResult { // Function that takes a protocol, hostname, and port. Returns as the ScanResult structure.
 	mutex.Lock()
@@ -41,15 +42,14 @@ func ScanPort(protocol, hostname string, port int, wg *sync.WaitGroup) ScanResul
 	result.State = "Open" // Should no errors be encountered, set the state atribute of the element in go to Open.
 	mutex.Unlock()
 	wg.Done()
+	results = append(results, result)
 	return result // Returns the element of the array.
 }
 
 func InitialScan(hostname string) []ScanResult { // Takes an IP address as an argument, and returns an array
-	var results []ScanResult // Initalizes a zero-filled array in results
 	wg.Add(1024)
 	for i := 0; i <= 1024; i++ { // As long as i is less than or equal to 1024, run the following and increase i by one.
 		go ScanPort("tcp", hostname, i, &wg)
-		results = append(results, ScanResult) // Run the ScanPort function with the tcp, hostname, and i arguments. Put this on the end of the results array.
 	}
 	wg.Wait()
 	return results // Return the results array.
