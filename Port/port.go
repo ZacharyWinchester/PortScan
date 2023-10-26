@@ -9,7 +9,7 @@ import (
 )
 
 type ScanResult struct { // Creates a structure to be called later for implimentation into an array. Allows the array to easily store both the port and state of the port in each element
-	Port  int
+	Port int
 	Protocol string
 	State string
 }
@@ -18,6 +18,7 @@ var (
 	mutex sync.Mutex
 	wg sync.WaitGroup
 	results []ScanResult // Initalizes a zero-filled array in results
+	closedCounter int
 )
 
 func ScanPort(protocol, hostname string, port int) ScanResult { // Function that takes a protocol, hostname, and port. Returns as the ScanResult structure.
@@ -43,7 +44,6 @@ func ScanPort(protocol, hostname string, port int) ScanResult { // Function that
 }
 
 func InitialScan(hostname string) []ScanResult { // Takes an IP address as an argument, and returns an array
-	var a int
 	for i := 0; i <= 1024; i++ { // As long as i is less than or equal to 1024, run the following and increase i by one.
 		wg.Add(1)
 		go func(port int) {
@@ -54,7 +54,7 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 				results = append(results, result)
 				mutex.Unlock()
 			} else {
-				a++
+				closedCounter++
 			}
 		}(i)
 	}
