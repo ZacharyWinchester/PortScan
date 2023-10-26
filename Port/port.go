@@ -10,7 +10,7 @@ import (
 
 var (
 	mutex sync.Mutex
-	wg sync.WaitGroup()
+	wg sync.WaitGroup
 )
 
 type ScanResult struct { // Creates a structure to be called later for implimentation into an array. Allows the array to easily store both the port and state of the port in each element
