@@ -33,7 +33,7 @@ func ScanPort(protocol, hostname string, port int, wg *sync.WaitGroup) ScanResul
 		result.State = "Closed" // Sets the state in this port's element to "Closed".
 		return result // Returns the element.
 	}
-	func(conn net.Conn) { // Waits for surrounding functions to return before this function executes. Tries to close the connection that was established previously.
+	defer func(conn net.Conn) { // Waits for surrounding functions to return before this function executes. Tries to close the connection that was established previously.
 		err := conn.Close() // Stores any produced errors from trying to close the connection.
 		if err != nil { // If there is an error, print that an error was encountered.
 			log.Error("Connection close error") // If the connection fails to close, log an error.
