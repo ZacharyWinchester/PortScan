@@ -47,8 +47,8 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 	var results []ScanResult // Initalizes a zero-filled array in results
 	wg.Add(1024)
 	for i := 0; i <= 1024; i++ { // As long as i is less than or equal to 1024, run the following and increase i by one.
-		resultselement := go ScanPort("tcp", hostname, i, &wg)
-		results = append(results, resultselement) // Run the ScanPort function with the tcp, hostname, and i arguments. Put this on the end of the results array.
+		go ScanPort("tcp", hostname, i, &wg)
+		results = append(results, ScanResult) // Run the ScanPort function with the tcp, hostname, and i arguments. Put this on the end of the results array.
 	}
 	wg.Wait()
 	return results // Return the results array.
