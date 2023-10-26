@@ -47,8 +47,8 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 		wg.Add(1)
 		go func(int) {
 		defer wg.Done()
-		result := ScanPort("tcp", hostname, i, &wg)
 		mutex.Lock()
+		result := ScanPort("tcp", hostname, i, &wg)
 		results = append(results, result)
 		mutex.Unlock()
 		}(i)
