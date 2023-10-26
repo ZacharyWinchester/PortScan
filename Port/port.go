@@ -21,8 +21,6 @@ var (
 )
 
 func ScanPort(protocol, hostname string, port int, wg *sync.WaitGroup) ScanResult { // Function that takes a protocol, hostname, and port. Returns as the ScanResult structure.
-	defer wg.Done()
-	mutex.Lock()
 	result := ScanResult{Port: port} // Sets the Port element to the port number taken in by this function.
 	result.Protocol = protocol // Sets the Protocol element to the protocol type taken in by this function.
 	address := hostname + ":" + strconv.Itoa(port) // Takes the hostname (represented as an ip), concatinates a ':' (signifies a socket) to it, and then turns the port number into a string so that it can be concatinated to the rest of the address. Stores in address.
@@ -41,15 +39,19 @@ func ScanPort(protocol, hostname string, port int, wg *sync.WaitGroup) ScanResul
 		}
 	}(conn) // Immediately Invoked Function. Right after the above function is declared, we invoke it with conn as an argument.
 	result.State = "Open" // Should no errors be encountered, set the state atribute of the element in go to Open.
-	mutex.Unlock()
-	results = append(results, result)
 	return result // Returns the element of the array.
 }
 
 func InitialScan(hostname string) []ScanResult { // Takes an IP address as an argument, and returns an array
 	for i := 0; i <= 3; i++ { // As long as i is less than or equal to 1024, run the following and increase i by one.
 		wg.Add(1)
-		go ScanPort("tcp", hostname, i, &wg)
+		go func() {
+		defer wg.Done()
+		ScanPort("tcp", hostname, i, &wg)
+		mutex.Lock()
+		results = append(results, result)
+		mutex.Unlock()
+		}()
 	}
 	wg.Wait()
 	return results // Return the results array.
