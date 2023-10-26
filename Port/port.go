@@ -50,7 +50,7 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 	for i := 0; i <= 3; i++ { // As long as i is less than or equal to 1024, run the following and increase i by one.
 		wg.Add(1)
 		go ScanPort("tcp", hostname, i, &wg)
+		wg.Wait()
 	}
-	wg.Wait()
 	return results // Return the results array.
 }
