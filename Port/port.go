@@ -20,7 +20,7 @@ var (
 	results []ScanResult // Initalizes a zero-filled array in results
 )
 
-func ScanPort(protocol, hostname string, port int, wg *sync.WaitGroup) ScanResult { // Function that takes a protocol, hostname, and port. Returns as the ScanResult structure.
+func ScanPort(protocol, hostname string, port int, wg *sync.WaitGroup) result { // Function that takes a protocol, hostname, and port. Returns as the ScanResult structure.
 	result := ScanResult{Port: port} // Sets the Port element to the port number taken in by this function.
 	result.Protocol = protocol // Sets the Protocol element to the protocol type taken in by this function.
 	address := hostname + ":" + strconv.Itoa(port) // Takes the hostname (represented as an ip), concatinates a ':' (signifies a socket) to it, and then turns the port number into a string so that it can be concatinated to the rest of the address. Stores in address.
