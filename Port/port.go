@@ -21,6 +21,7 @@ var (
 )
 
 func ScanPort(protocol, hostname string, port int, wg *sync.WaitGroup) ScanResult { // Function that takes a protocol, hostname, and port. Returns as the ScanResult structure.
+	defer wg.Done()
 	mutex.Lock()
 	result := ScanResult{Port: port} // Sets the Port element to the port number taken in by this function.
 	result.Protocol = protocol // Sets the Protocol element to the protocol type taken in by this function.
