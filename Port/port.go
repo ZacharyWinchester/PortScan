@@ -21,7 +21,6 @@ var (
 )
 
 func ScanPort(protocol, hostname string, port int, wg *sync.WaitGroup) ScanResult { // Function that takes a protocol, hostname, and port. Returns as the ScanResult structure.
-	defer wg.Done()
 	mutex.Lock()
 	result := ScanResult{Port: port} // Sets the Port element to the port number taken in by this function.
 	result.Protocol = protocol // Sets the Protocol element to the protocol type taken in by this function.
@@ -42,7 +41,7 @@ func ScanPort(protocol, hostname string, port int, wg *sync.WaitGroup) ScanResul
 	}(conn) // Immediately Invoked Function. Right after the above function is declared, we invoke it with conn as an argument.
 	result.State = "Open" // Should no errors be encountered, set the state atribute of the element in go to Open.
 	mutex.Unlock()
-	wg.Done()
+	defer wg.Done()
 	results = append(results, result)
 	return result // Returns the element of the array.
 }
