@@ -43,18 +43,18 @@ func ScanPort(protocol, hostname string, port int) ScanResult { // Function that
 }
 
 func InitialScan(hostname string) []ScanResult { // Takes an IP address as an argument, and returns an array
-	var count int
+	var a int
 	for i := 0; i <= 1024; i++ { // As long as i is less than or equal to 1024, run the following and increase i by one.
 		wg.Add(1)
 		go func(port int) {
 			defer wg.Done()
 			result := ScanPort("tcp", hostname, port)
-			if result.Status == "Open" {
+			if result.State == "Open" {
 				mutex.Lock()
 				results = append(results, result)
 				mutex.Unlock()
 			} else {
-				count == count + 1
+				a++
 			}
 		}(i)
 	}
