@@ -46,11 +46,11 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 	for i := 0; i <= 3; i++ { // As long as i is less than or equal to 1024, run the following and increase i by one.
 		wg.Add(1)
 		go func(port int) {
-		defer wg.Done()
-		result := ScanPort("tcp", hostname, i, &wg)
-		mutex.Lock()
-		results = append(results, result)
-		mutex.Unlock()
+			defer wg.Done()
+			result := ScanPort("tcp", hostname, i, &wg)
+			mutex.Lock()
+			results = append(results, result)
+			mutex.Unlock()
 		}(i)
 	}
 	wg.Wait()
