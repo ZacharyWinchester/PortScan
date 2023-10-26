@@ -51,7 +51,7 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 		mutex.Lock()
 		results = append(results, result)
 		mutex.Unlock()
-		}()
+		}(i)
 	}
 	wg.Wait()
 	return results // Return the results array.
