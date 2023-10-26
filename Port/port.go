@@ -18,7 +18,7 @@ var (
 	mutex sync.Mutex
 	wg sync.WaitGroup
 	results []ScanResult // Initalizes a zero-filled array in results
-	closedCounter int
+	ClosedCounter int
 )
 
 func ScanPort(protocol, hostname string, port int) ScanResult { // Function that takes a protocol, hostname, and port. Returns as the ScanResult structure.
@@ -54,7 +54,7 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 				results = append(results, result)
 				mutex.Unlock()
 			} else {
-				closedCounter++
+				ClosedCounter++
 			}
 		}(i)
 	}
