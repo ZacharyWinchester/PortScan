@@ -4,7 +4,12 @@ import (
 	"net" // Golang portable interface for network input/output.
 	"strconv" // Implements conversions to and from string representations of basic data types.
 	"time" // Provides functionality for measuring and displaying time.
+	"sync"
 	log "github.com/sirupsen/logrus" // Adds advanced logging functionality using the logrus package.
+)
+
+var (
+	mutex sync.Mutex
 )
 
 type ScanResult struct { // Creates a structure to be called later for implimentation into an array. Allows the array to easily store both the port and state of the port in each element
@@ -13,7 +18,8 @@ type ScanResult struct { // Creates a structure to be called later for impliment
 	State string
 }
 
-func ScanPort(protocol, hostname string, port int) ScanResult { // Function that takes a protocol, hostname, and port. Returns as the ScanResult structure.
+func ScanPort(protocol, hostname string, port int, wg *sync.WaitGroup) ScanResult { // Function that takes a protocol, hostname, and port. Returns as the ScanResult structure.
+	mutex.Lock()
 	result := ScanResult{Port: port} // Sets the Port element to the port number taken in by this function.
 	result.Protocol = protocol // Sets the Protocol element to the protocol type taken in by this function.
 	address := hostname + ":" + strconv.Itoa(port) // Takes the hostname (represented as an ip), concatinates a ':' (signifies a socket) to it, and then turns the port number into a string so that it can be concatinated to the rest of the address. Stores in address.
@@ -32,13 +38,17 @@ func ScanPort(protocol, hostname string, port int) ScanResult { // Function that
 		}
 	}(conn) // Immediately Invoked Function. Right after the above function is declared, we invoke it with conn as an argument.
 	result.State = "Open" // Should no errors be encountered, set the state atribute of the element in go to Open.
+	mutex.Unlock()
+	wg.Done()
 	return result // Returns the element of the array.
 }
 
 func InitialScan(hostname string) []ScanResult { // Takes an IP address as an argument, and returns an array
 	var results []ScanResult // Initalizes a zero-filled array in results
+	wg.Add(1024)
 	for i := 0; i <= 1024; i++ { // As long as i is less than or equal to 1024, run the following and increase i by one.
-		results = append(results, go ScanPort("tcp", hostname, i)) // Run the ScanPort function with the tcp, hostname, and i arguments. Put this on the end of the results array.
+		results = append(results, go ScanPort("tcp", hostname, i, &wg)) // Run the ScanPort function with the tcp, hostname, and i arguments. Put this on the end of the results array.
 	}
+	wg.Wait()
 	return results // Return the results array.
 }
