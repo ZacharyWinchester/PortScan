@@ -9,10 +9,6 @@ import (
 	log "github.com/sirupsen/logrus" // Adds advanced logging functionality using the logrus package.
 )
 
-func sortResults(i, j int) {
-	return results[i].Port > results[j].Port
-}
-
 type ScanResult struct { // Creates a structure to be called later for implimentation into an array. Allows the array to easily store both the port and state of the port in each element
 	Port int
 	Protocol string
@@ -64,6 +60,8 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 		}(i)
 	}
 	wg.Wait()
-	sort.Slice(results, sortResults)
+	sort.SliceStable(results, func(i, j int) bool {
+		return results[i].Port < results[j].Port
+	})
 	return results // Return the results array.
 }
