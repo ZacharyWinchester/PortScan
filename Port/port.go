@@ -5,8 +5,13 @@ import (
 	"strconv" // Implements conversions to and from string representations of basic data types.
 	"time" // Provides functionality for measuring and displaying time.
 	"sync"
+	"sort"
 	log "github.com/sirupsen/logrus" // Adds advanced logging functionality using the logrus package.
 )
+
+func sortResults(i, j int) {
+	return results[i].Port > results[j].Port
+}
 
 type ScanResult struct { // Creates a structure to be called later for implimentation into an array. Allows the array to easily store both the port and state of the port in each element
 	Port int
@@ -59,5 +64,6 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 		}(i)
 	}
 	wg.Wait()
+	sort.Slice(results, sortResults)
 	return results // Return the results array.
 }
