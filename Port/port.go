@@ -50,9 +50,14 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 		go func(port int) {
 			defer wg.Done()
 			result := ScanPort("tcp", hostname, port)
-			mutex.Lock()
-			results = append(results, result)
-			mutex.Unlock()
+			if result.State == "Open" {
+				mutex.Lock()
+				results = append(results, result)
+				mutex.Unlock()
+			} else {
+				ClosedCounter++
+				results = append(results, result)
+			}
 		}(i)
 	}
 	wg.Wait()
