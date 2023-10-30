@@ -45,7 +45,7 @@ func ScanPort(protocol, hostname string, port int) ScanResult { // Function that
 }
 
 func InitialScan(hostname string) []ScanResult { // Takes an IP address as an argument, and returns an array
-	for i := 1; i <= 5000; i++ { // As long as i is less than or equal to 1024, run the following and increase i by one.
+	for i := 1; i <= 10000; i++ { // As long as i is less than or equal to 1024, run the following and increase i by one.
 		wg.Add(1)
 		go func(port int) {
 			defer wg.Done()
@@ -56,9 +56,8 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 				mutex.Unlock()
 			} else {
 				mutex.Lock()
-				results = append(results, result)
-				mutex.Unlock()
 				ClosedCounter++
+				mutex.Unlock()
 			}
 		}(i)
 	}
