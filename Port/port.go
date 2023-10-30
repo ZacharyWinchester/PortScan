@@ -26,7 +26,7 @@ func ScanPort(protocol, hostname string, port int) ScanResult { // Function that
 	result := ScanResult{Port: port} // Sets the Port element to the port number taken in by this function.
 	result.Protocol = protocol // Sets the Protocol element to the protocol type taken in by this function.
 	address := hostname + ":" + strconv.Itoa(port) // Takes the hostname (represented as an ip), concatinates a ':' (signifies a socket) to it, and then turns the port number into a string so that it can be concatinated to the rest of the address. Stores in address.
-	conn, err := net.DialTimeout(protocol, address, 1*time.Second) /* DialTimeout is a function in the net package. It takes a protocol, address, and a timeout duration. It attempts to connect to the address
+	conn, err := net.DialTimeout(protocol, address, 5*time.Second) /* DialTimeout is a function in the net package. It takes a protocol, address, and a timeout duration. It attempts to connect to the address
  									using the given protocol. Returns conn (which reads data from the connection), and error. If there is no error, then it returns nil for error.
 	  								conn and error are then assigned to conn and err in this function to be used later.*/
 
@@ -45,7 +45,7 @@ func ScanPort(protocol, hostname string, port int) ScanResult { // Function that
 }
 
 func InitialScan(hostname string) []ScanResult { // Takes an IP address as an argument, and returns an array
-	for i := 1; i <= 65535; i++ { // As long as i is less than or equal to 1024, run the following and increase i by one.
+	for i := 1; i <= 5000; i++ { // As long as i is less than or equal to 1024, run the following and increase i by one.
 		wg.Add(1)
 		go func(port int) {
 			defer wg.Done()
