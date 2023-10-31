@@ -7,7 +7,6 @@ import (
 	"sort" // Provides functionality for sorting the resulting port scan
 	"sync" // Provides locking and unlocking
 	log "github.com/sirupsen/logrus" // Adds advanced logging functionality using the logrus package.
-	"github.com/gammazero/workerpool"
 )
 
 type ScanResult struct { // Creates a structure to be called later for implimentation into an array. Allows the array to easily store both the port and state of the port in each element
@@ -16,31 +15,23 @@ type ScanResult struct { // Creates a structure to be called later for impliment
 	State string
 }
 
-type T = interface{} // Accepts any type
-
-type WorkerPool interface { // Contract for Worker Pool implementation
-	Run()
-	AddTask(task func())
-}
-
-type workerPool struct {
-	maxWorker int
-	queuedTaskC chan func()
-}
-
-func (wp *workerPool) Run() {// This is the run method as detailed in the above interface.
-	for i := 0; i < wp.maxWorker; i++ { // Spawns a number of goroutines based on the number of max workers.
-		go func(workerID int) {
-			for task := range wp.queuedTaskC {
-				task()
+func worker(id int, jobs <-chan int, resultC chan<- int) {
+	for j := range jobs {
+		func(port int) {
+			result := ScanPort("tcp", hostname, port)
+			if result.State == "Open" {
+				mutex.Lock()
+				resultC <- ScanResult{result}
+				mutex.Unlock()
+			} else {
+				mutex.Lock()
+				ClosedCounter++
+				mutex.Unlock()
 			}
-		}(i+1)
+		}(i)
 	}
 }
 
-func (wp *workerPool) AddTask(task func()) {
-	wp.queuedTaskC <- task // Push task to queuedTaskC channel.
-}
 var (
 	mutex sync.Mutex
 	ClosedCounter int
@@ -69,29 +60,20 @@ func ScanPort(protocol, hostname string, port int) ScanResult { // Function that
 }
 
 func InitialScan(hostname string) []ScanResult { // Takes an IP address as an argument, and returns an array
-	totalWorker := 10 // Creates 10 workers
-	wp := workerpool.NewWorkerPool(totalWorker) // Creates a pool of workers
-	wp.Run() // Calls the run function
-
-	totalTask := 60000
-	resultC := make(chan ScanResult, totalTask) // Makes the result channel with the size of totalTask
-	
-	for i := 1; i <= totalTask; i++ { // As long as i is less than or equal to 1024, run the following and increase i by one.
-		wp.AddTask(func(port int) {
-			defer wg.Done()
-			result := ScanPort("tcp", hostname, port)
-			if result.State == "Open" {
-				mutex.Lock()
-				resultC <- ScanResult{result}
-				mutex.Unlock()
-			} else {
-				mutex.Lock()
-				ClosedCounter++
-				mutex.Unlock()
-			}
-		}(i))
+	const totalTask := 60000
+	jobs := make(chan int, totalTask) // Creates a jobs channel with a buffer size of numJobs
+	resultsC := make(chan int, numJobs) // Creates a resultsC channel with a buffer size of numJobs
+	for i := 1; w <= 100; i++ {
+		go worker(i, jobs, resultsC)
 	}
-	<-waitC1
+	for i := 1; i <= totalTask; i++ { // As long as i is less than or equal to totalTask, send i to jobs channel.
+		jobs <- i
+	}
+	close(jobs)
+	for i := 1; a <= totalTask; i++ { // Recieves the results of the workers
+		<-resultsC
+	}
+	close(results)
 	sort.SliceStable(results, func(i, j int) bool {
 		return results[i].Port < results[j].Port
 	})
