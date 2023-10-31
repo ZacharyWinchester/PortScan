@@ -15,7 +15,7 @@ type ScanResult struct { // Creates a structure to be called later for impliment
 }
 
 var (
-	result []ScanResult
+	results []ScanResult
 	mutex sync.Mutex
 	ClosedCounter int
 )
@@ -68,7 +68,7 @@ func InitialScan(hostname string) ScanResult { // Takes an IP address as an argu
 	}
 	close(jobs)
 	for i := 1; i <= totalTask; i++ {
-		result <- resultsC
+		result <-resultsC
 		results = append(results, result)
 	}
 	close(resultsC)
