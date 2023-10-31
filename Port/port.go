@@ -5,6 +5,7 @@ import (
 	"net" // Golang portable interface for network input/output.
 	"strconv" // Implements conversions to and from string representations of basic data types.
 	"time" // Provides functionality for measuring and displaying time.
+	"sync" // Locking and unlocking
 	log "github.com/sirupsen/logrus" // Adds advanced logging functionality using the logrus package.
 )
 
@@ -14,24 +15,28 @@ type ScanResult struct { // Creates a structure to be called later for impliment
 	State string
 }
 
-func worker(id int, jobs <-chan int, resultC chan<- ScanResult, hostname string) {
-	for i := range jobs {
-		func(port int) {
-			result := ScanPort("tcp", hostname, port)
-			fmt.Println("Port Scanned!")
-			if result.State == "Open" {
-				resultC <- result
-			} else {
-				ClosedCounter++
-			}
-		}(i)
-	}
-}
-
 var (
 	results []ScanResult
 	ClosedCounter int
 )
+
+func worker(id int, jobs <-chan int, resultC chan<- ScanResult, hostname string) {
+	for i := range jobs {
+		func(i) {
+			result := ScanPort("tcp", hostname, i)
+			fmt.Println("Port Scanned!")
+			if result.State == "Open" {
+				resultC <- result
+				fmt.Println("Result is now in resultC!")
+			} else {
+				mutex.Lock()
+				ClosedCounter++
+				mutex.Unlock()
+				fmt.Println("ClosedCounter incremented!")
+			}
+		}
+	}
+}
 
 func ScanPort(protocol, hostname string, port int) ScanResult { // Function that takes a protocol, hostname, and port. Returns as the ScanResult structure.
 	result := ScanResult{Port: port} // Sets the Port element to the port number taken in by this function.
