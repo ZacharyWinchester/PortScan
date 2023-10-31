@@ -5,7 +5,6 @@ import (
 	"net" // Golang portable interface for network input/output.
 	"strconv" // Implements conversions to and from string representations of basic data types.
 	"time" // Provides functionality for measuring and displaying time.
-	"sync" // Provides worker pool functionality
 	log "github.com/sirupsen/logrus" // Adds advanced logging functionality using the logrus package.
 )
 
