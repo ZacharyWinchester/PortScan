@@ -74,9 +74,10 @@ func InitialScan(hostname string) chan ScanResult { // Takes an IP address as an
 		jobs <- i
 		fmt.Println("Ints now in jobs")
 	}
-	defer close(jobs)
-
-	defer close(resultsC)
+	defer funct() {
+		close(jobs)
+		close(resultsC)
+	}
 	fmt.Println("Done?")
 	return resultsC // Return the results array.
 }
