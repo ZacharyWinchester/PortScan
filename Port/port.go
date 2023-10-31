@@ -21,7 +21,7 @@ func worker(id int, jobs <-chan int, resultC chan<- ScanResult, hostname string)
 			result := ScanPort("tcp", hostname, port)
 			if result.State == "Open" {
 				mutex.Lock()
-				resultC <- ScanResult.result
+				resultC <- result
 				mutex.Unlock()
 			} else {
 				mutex.Lock()
