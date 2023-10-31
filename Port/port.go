@@ -15,7 +15,7 @@ type ScanResult struct { // Creates a structure to be called later for impliment
 	State string
 }
 
-func worker(id int, jobs <-chan int, resultC chan<- int, hostname string) {
+func worker(id int, jobs <-chan int, resultC chan<- ScanResult, hostname string) {
 	for i := range jobs {
 		func(port int) {
 			result := ScanPort("tcp", hostname, port)
