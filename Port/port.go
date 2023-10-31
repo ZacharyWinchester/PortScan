@@ -24,7 +24,7 @@ type WorkerPool interface { // Contract for Worker Pool implementation
 
 type workerPool struct {
 	maxWorker int
-	queuedTask C chan func()
+	queuedTaskC chan func()
 }
 
 func (wp *workerPool) Run() {// This is the run method as detailed in the above interface.
