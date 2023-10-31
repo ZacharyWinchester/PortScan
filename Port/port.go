@@ -77,7 +77,6 @@ func InitialScan(hostname string) chan ScanResult { // Takes an IP address as an
 	close(jobs)
 	for i := 1; i <= totalTask; i++ { // Recieves the results of the workers
 		<-resultsC
-		fmt.println("Recieved!")
 		fmt.Println("Recieved!")
 	}
 	close(resultsC)
