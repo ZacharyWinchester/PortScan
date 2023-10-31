@@ -62,7 +62,7 @@ func ScanPort(protocol, hostname string, port int) ScanResult { // Function that
 }
 
 func InitialScan(hostname string) chan ScanResult { // Takes an IP address as an argument, and returns an array
-	fmt.Println("Hey I am now in Port.go!)
+	fmt.Println("Hey I am now in Port.go!")
 	const totalTask = 100
 	jobs := make(chan int, totalTask) // Creates a jobs channel with a buffer size of totalTask
 	resultsC := make(chan ScanResult, totalTask) // Creates a resultsC channel with a buffer size of totalTask
