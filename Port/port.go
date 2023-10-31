@@ -5,7 +5,7 @@ import (
 	"net" // Golang portable interface for network input/output.
 	"strconv" // Implements conversions to and from string representations of basic data types.
 	"time" // Provides functionality for measuring and displaying time.
-	"sync" // Provides locking and unlocking
+	"sync" // Provides worker pool functionality
 	log "github.com/sirupsen/logrus" // Adds advanced logging functionality using the logrus package.
 )
 
@@ -21,20 +21,15 @@ func worker(id int, jobs <-chan int, resultC chan<- ScanResult, hostname string)
 			result := ScanPort("tcp", hostname, port)
 			fmt.Println("Port Scanned!")
 			if result.State == "Open" {
-				mutex.Lock()
 				resultC <- result
-				mutex.Unlock()
 			} else {
-				mutex.Lock()
 				ClosedCounter++
-				mutex.Unlock()
 			}
 		}(i)
 	}
 }
 
 var (
-	mutex sync.Mutex
 	results []ScanResult
 	ClosedCounter int
 )
