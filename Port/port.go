@@ -1,6 +1,7 @@
 package port // Initializes the file as a package.
 
 import (
+	"fmt"
 	"net" // Golang portable interface for network input/output.
 	"strconv" // Implements conversions to and from string representations of basic data types.
 	"time" // Provides functionality for measuring and displaying time.
@@ -18,6 +19,7 @@ func worker(id int, jobs <-chan int, resultC chan<- ScanResult, hostname string)
 	for i := range jobs {
 		func(port int) {
 			result := ScanPort("tcp", hostname, port)
+			fmt.Println("Port Scanned!")
 			if result.State == "Open" {
 				mutex.Lock()
 				resultC <- result
@@ -60,10 +62,12 @@ func ScanPort(protocol, hostname string, port int) ScanResult { // Function that
 }
 
 func InitialScan(hostname string) chan ScanResult { // Takes an IP address as an argument, and returns an array
-	const totalTask = 1000
+	fmt.Println("Hey I am now in Port.go!)
+	const totalTask = 100
 	jobs := make(chan int, totalTask) // Creates a jobs channel with a buffer size of totalTask
 	resultsC := make(chan ScanResult, totalTask) // Creates a resultsC channel with a buffer size of totalTask
 	for i := 1; i <= 100; i++ {
+		fmt.Printf("Making worker %d!", i)
 		go worker(i, jobs, resultsC, hostname)
 	}
 	for i := 1; i <= totalTask; i++ { // As long as i is less than or equal to totalTask, send i to jobs channel.
