@@ -71,8 +71,8 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 	}
 	close(jobs)
 	for i := 1; i <= totalTask; i++ { // Recieves the results of the workers
-		results <-resultsC
+		<-resultsC
 	}
 	close(resultsC)
-	return results // Return the results array.
+	return resultsC // Return the results array.
 }
