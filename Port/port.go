@@ -72,14 +72,14 @@ func InitialScan(hostname string) chan ScanResult { // Takes an IP address as an
 	}
 	for i := 1; i <= totalTask; i++ { // As long as i is less than or equal to totalTask, send i to jobs channel.
 		jobs <- i
-		fmt.println("Ints now in jobs")
+		fmt.Println("Ints now in jobs")
 	}
 	close(jobs)
 	for i := 1; i <= totalTask; i++ { // Recieves the results of the workers
 		<-resultsC
-		fmt.println("Recieved!")
+		fmt.Println("Recieved!")
 	}
 	close(resultsC)
-	fmt.println("Done?")
+	fmt.Println("Done?")
 	return resultsC // Return the results array.
 }
