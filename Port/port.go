@@ -69,7 +69,7 @@ func InitialScan(hostname string) ScanResult { // Takes an IP address as an argu
 	close(jobs)
 	for i := 1; i <= totalTask; i++ {
 		result <- resultsC
-		results = results.append(result)
+		results = append(results, result)
 	}
 	close(resultsC)
 	return results // Return the results array.
