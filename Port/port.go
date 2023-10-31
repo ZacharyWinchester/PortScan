@@ -33,6 +33,7 @@ func worker(id int, jobs <-chan int, resultC chan<- ScanResult, hostname string)
 
 var (
 	mutex sync.Mutex
+	results []ScanResult
 	ClosedCounter int
 )
 
@@ -70,8 +71,8 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 	}
 	close(jobs)
 	for i := 1; i <= totalTask; i++ { // Recieves the results of the workers
-		<-resultsC
+		results <-resultsC
 	}
 	close(resultsC)
-	return resultsC // Return the results array.
+	return results // Return the results array.
 }
