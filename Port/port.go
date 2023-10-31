@@ -30,6 +30,7 @@ func worker(id int, jobs <-chan int, resultC chan<- ScanResult, hostname string)
 				resultC <- result
 				fmt.Println("Result is now in resultC!")
 			} else {
+				resultC <- nil
 				mutex.Lock()
 				ClosedCounter++
 				mutex.Unlock()
