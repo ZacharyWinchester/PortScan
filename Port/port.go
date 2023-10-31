@@ -15,7 +15,7 @@ type ScanResult struct { // Creates a structure to be called later for impliment
 }
 
 var (
-	results []ScanResult
+	result []ScanResult
 	mutex sync.Mutex
 	ClosedCounter int
 )
@@ -56,7 +56,7 @@ func ScanPort(protocol, hostname string, port int) ScanResult { // Function that
 	return result // Returns the element of the array.
 }
 
-func InitialScan(hostname string) chan ScanResult { // Takes an IP address as an argument, and returns an array
+func InitialScan(hostname string) ScanResult { // Takes an IP address as an argument, and returns an array
 	const totalTask = 100
 	jobs := make(chan int, totalTask) // Creates a jobs channel with a buffer size of totalTask
 	resultsC := make(chan ScanResult, totalTask) // Creates a resultsC channel with a buffer size of totalTask
