@@ -17,14 +17,14 @@ type ScanResult struct { // Creates a structure to be called later for impliment
 
 var (
 	results []ScanResult
-	sync mutex.sync
+	mutex sync.Mutex
 	ClosedCounter int
 )
 
 func worker(id int, jobs <-chan int, resultC chan<- ScanResult, hostname string) {
 	for i := range jobs {
-		func(i) {
-			result := ScanPort("tcp", hostname, i)
+		func(port int) {
+			result := ScanPort("tcp", hostname, port int)
 			fmt.Println("Port Scanned!")
 			if result.State == "Open" {
 				resultC <- result
@@ -34,7 +34,7 @@ func worker(id int, jobs <-chan int, resultC chan<- ScanResult, hostname string)
 				ClosedCounter++
 				mutex.Unlock()
 				fmt.Println("ClosedCounter incremented!")
-			}
+			}(i)
 		}
 	}
 }
