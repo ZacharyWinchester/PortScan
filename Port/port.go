@@ -4,7 +4,8 @@ import (
 	"net" // Golang portable interface for network input/output.
 	"strconv" // Implements conversions to and from string representations of basic data types.
 	"time" // Provides functionality for measuring and displaying time.
-	"sort"
+	"sort" // Provides functionality for sorting the resulting port scan
+	"sync" // Provides locking and unlocking
 	log "github.com/sirupsen/logrus" // Adds advanced logging functionality using the logrus package.
 )
 
@@ -41,7 +42,6 @@ func (wp *workerPool) AddTask(task func()) {
 }
 var (
 	mutex sync.Mutex
-	results := ScanResults()
 	ClosedCounter int
 )
 
@@ -90,7 +90,7 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 			}
 		}(i))
 	}
-	<-waitC
+	<-waitC1
 	sort.SliceStable(results, func(i, j int) bool {
 		return results[i].Port < results[j].Port
 	})
