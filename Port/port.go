@@ -17,6 +17,7 @@ type ScanResult struct { // Creates a structure to be called later for impliment
 
 var (
 	results []ScanResult
+	sync mutex.sync
 	ClosedCounter int
 )
 
