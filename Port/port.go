@@ -15,8 +15,8 @@ type ScanResult struct { // Creates a structure to be called later for impliment
 	State string
 }
 
-func worker(id int, jobs <-chan int, resultC chan<- int) {
-	for j := range jobs {
+func worker(id int, jobs <-chan int, resultC chan<- int, hostname) {
+	for i := range jobs {
 		func(port int) {
 			result := ScanPort("tcp", hostname, port)
 			if result.State == "Open" {
@@ -64,7 +64,7 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 	jobs := make(chan int, totalTask) // Creates a jobs channel with a buffer size of numJobs
 	resultsC := make(chan int, numJobs) // Creates a resultsC channel with a buffer size of numJobs
 	for i := 1; w <= 100; i++ {
-		go worker(i, jobs, resultsC)
+		go worker(i, jobs, resultsC, hostname)
 	}
 	for i := 1; i <= totalTask; i++ { // As long as i is less than or equal to totalTask, send i to jobs channel.
 		jobs <- i
