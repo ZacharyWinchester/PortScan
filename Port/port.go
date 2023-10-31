@@ -4,7 +4,6 @@ import (
 	"net" // Golang portable interface for network input/output.
 	"strconv" // Implements conversions to and from string representations of basic data types.
 	"time" // Provides functionality for measuring and displaying time.
-	"sort" // Provides functionality for sorting the resulting port scan
 	"sync" // Provides locking and unlocking
 	log "github.com/sirupsen/logrus" // Adds advanced logging functionality using the logrus package.
 )
@@ -61,8 +60,8 @@ func ScanPort(protocol, hostname string, port int) ScanResult { // Function that
 
 func InitialScan(hostname string) []ScanResult { // Takes an IP address as an argument, and returns an array
 	const totalTask = 60000
-	jobs := make(chan int, totalTask) // Creates a jobs channel with a buffer size of numJobs
-	resultsC := make(chan ScanResult, numJobs) // Creates a resultsC channel with a buffer size of numJobs
+	jobs := make(chan int, totalTask) // Creates a jobs channel with a buffer size of totalTask
+	resultsC := make(chan ScanResult, totalTask) // Creates a resultsC channel with a buffer size of totalTask
 	for i := 1; i <= 100; i++ {
 		go worker(i, jobs, resultsC, hostname)
 	}
@@ -73,9 +72,6 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 	for i := 1; i <= totalTask; i++ { // Recieves the results of the workers
 		<-resultsC
 	}
-	close(results)
-	sort.SliceStable(results, func(i, j int) bool {
-		return results[i].Port < results[j].Port
-	})
-	return results // Return the results array.
+	close(resultsC)
+	return resultsC // Return the results array.
 }
