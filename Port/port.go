@@ -26,16 +26,13 @@ func worker(id int, jobs <-chan int, resultC chan<- ScanResult, hostname string)
 		func(port int) {
 			result := ScanPort("tcp", hostname, port)
 			fmt.Println("Port Scanned!")
-			if result.State == "Open" {
-				resultC <- result
-				fmt.Println("Result is now in resultC!")
-			} else {
-				resultC <- nil
+			if result.State == "Closed" {
 				mutex.Lock()
 				ClosedCounter++
 				mutex.Unlock()
 				fmt.Println("ClosedCounter incremented!")
 			}
+			resultC <- result
 		}(i)
 	}
 }
