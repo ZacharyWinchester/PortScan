@@ -60,7 +60,7 @@ func ScanPort(protocol, hostname string, port int) ScanResult { // Function that
 }
 
 func InitialScan(hostname string) chan ScanResult { // Takes an IP address as an argument, and returns an array
-	const totalTask = 60000
+	const totalTask = 1000
 	jobs := make(chan int, totalTask) // Creates a jobs channel with a buffer size of totalTask
 	resultsC := make(chan ScanResult, totalTask) // Creates a resultsC channel with a buffer size of totalTask
 	for i := 1; i <= 100; i++ {
