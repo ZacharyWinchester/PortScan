@@ -7,6 +7,7 @@ import (
 	"sort" // Provides functionality for sorting the resulting port scan
 	"sync" // Provides locking and unlocking
 	log "github.com/sirupsen/logrus" // Adds advanced logging functionality using the logrus package.
+	"github.com/gammazero/workerpool"
 )
 
 type ScanResult struct { // Creates a structure to be called later for implimentation into an array. Allows the array to easily store both the port and state of the port in each element
