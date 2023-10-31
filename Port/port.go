@@ -68,8 +68,9 @@ func InitialScan(hostname string) chan ScanResult { // Takes an IP address as an
 	}
 	close(jobs)
 	for i := 1; i <= totalTask; i++ {
-		results <- resultsC
+		result <- resultsC
+		results = results.append(result)
 	}
-	close(resultsC
+	close(resultsC)
 	return results // Return the results array.
 }
