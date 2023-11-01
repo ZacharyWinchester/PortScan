@@ -73,5 +73,8 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 		results = append(results, result)
 	}
 	close(resultsC)
+	sort.SliceStable(results, func(i, j int) bool {
+		return results[i].Port < results[j].Port
+	})
 	return results // Return the results array.
 }
