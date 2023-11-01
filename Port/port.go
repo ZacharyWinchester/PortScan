@@ -5,6 +5,7 @@ import (
 	"strconv" // Implements conversions to and from string representations of basic data types.
 	"time" // Provides functionality for measuring and displaying time.
 	"sync" // Locking and unlocking
+	"sort"
 	log "github.com/sirupsen/logrus" // Adds advanced logging functionality using the logrus package.
 )
 
@@ -69,8 +70,7 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 	}
 	close(jobs)
 	for i := 1; i <= totalTask; i++ {
-		result <-resultsC
-		results = append(results, result)
+		results = append(results, <-resultsC)
 	}
 	close(resultsC)
 	sort.SliceStable(results, func(i, j int) bool {
