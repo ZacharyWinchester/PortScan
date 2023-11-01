@@ -61,7 +61,7 @@ func InitialScan(hostname string) []ScanResult { // Takes an IP address as an ar
 	const totalTask = 65535
 	jobs := make(chan int, totalTask) // Creates a jobs channel with a buffer size of totalTask
 	resultsC := make(chan ScanResult, totalTask) // Creates a resultsC channel with a buffer size of totalTask
-	for i := 1; i <= 100; i++ {
+	for i := 1; i <= 1000; i++ {
 		go worker(i, jobs, resultsC, hostname)
 	}
 	for i := 1; i <= totalTask; i++ { // As long as i is less than or equal to totalTask, send i to jobs channel.
