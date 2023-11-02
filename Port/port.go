@@ -58,17 +58,16 @@ func ScanPort(protocol, hostname string, port int) ScanResult { // Function that
 }
 
 func InitialScan(hostname string, ports int, concurrent int) []ScanResult { // Takes an IP address as an argument, and returns an array
-	var totalTask := ports
-	jobs := make(chan int, totalTask) // Creates a jobs channel with a buffer size of totalTask
-	resultsC := make(chan ScanResult, totalTask) // Creates a resultsC channel with a buffer size of totalTask
+	jobs := make(chan int, ports) // Creates a jobs channel with a buffer size of ports
+	resultsC := make(chan ScanResult, ports) // Creates a resultsC channel with a buffer size of ports
 	for i := 1; i <= concurrent; i++ {
 		go worker(i, jobs, resultsC, hostname)
 	}
-	for i := 1; i <= totalTask; i++ { // As long as i is less than or equal to totalTask, send i to jobs channel.
+	for i := 1; i <= ports; i++ { // As long as i is less than or equal to ports, send i to jobs channel.
 		jobs <- i
 	}
 	close(jobs)
-	for i := 1; i <= totalTask; i++ {
+	for i := 1; i <= ports; i++ {
 		results = append(results, <-resultsC)
 	}
 	close(resultsC)
